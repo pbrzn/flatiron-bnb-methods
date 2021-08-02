@@ -16,12 +16,14 @@ class Reservation < ActiveRecord::Base
   end
 
   def in_before_out?
+    return if self.checkin.nil? || self.checkout.nil?
     if self.checkin >= self.checkout
       errors.add(:checkin, "Checkin must be an earlier date than checkout")
     end
   end
 
   def available?
+    return if self.checkin.nil? || self.checkout.nil?
     if !self.listing.reservations.all? {|r| r.checkout <= self.checkin || r.checkin >= self.checkout }
       errors.add(:listing, "is unavailable at the requested dates")
     end
